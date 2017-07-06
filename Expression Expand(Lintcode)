@@ -1,0 +1,57 @@
+/*
+*  tag: stack String
+*  reference: https://segmentfault.com/a/1190000008883991 https://laurabowenhe.github.io/2017/06/22/Expression%20Expand/
+*/
+
+public class Solution {
+    /**
+     * @param s  an expression includes numbers, letters and brackets
+     * @return a string
+     */
+    public String expressionExpand(String s) {
+        if(s == null) return null;
+
+        Stack<Object> stack = new Stack<Object>();  //store different data type --> use objecct
+        
+        char[] arr = s.toCharArray(); //change string to char
+        int num = 0;
+        for(char c : arr) {
+            //boolean isDigit(char ch)
+            if(Character.isDigit(c)==true) {   //1 or 14384
+                num = num*10 + c -'0'; 
+            } else if(c == '[') {
+                stack.push(Integer.valueOf(num));  //Integer.valueOf(int i)//returns an integer object holds the value of specified primitives,
+                num = 0;
+            } else if(c == ']') {
+                revise(stack);  //1.unit all the word together 2. deal with number in the stack
+            } else {  //the letter
+                stack.push(c);
+            }
+        }
+        revise(stack);
+        
+        return stack.pop().toString();
+    }
+    
+    public void revise(Stack<Object> stack) {
+        StringBuilder  add = new StringBuilder();  //can use append reverse, not fixed
+        Stack<Object> temp = new Stack<>();
+        
+        while(!stack.isEmpty() && stack.peek() instanceof Integer == false )  //a instanceof A == false
+            temp.push(stack.pop()); //ue another temp stack to reverse
+        
+        while(!temp.isEmpty()) {
+            add.append(temp.pop());
+        }
+        
+        int count = stack.isEmpty()?1:(Integer)stack.pop();  //get the number 
+        StringBuilder  part = new StringBuilder(add);
+        
+        if(count>0) {  //in case 0[ad] -4[ab]
+            while(count-->1) {  //use the count to repeat the word
+                add.append(part);
+            }
+            stack.push(add); //add a StringBuilder   push(E item)
+        }
+    }
+}
